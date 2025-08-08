@@ -155,6 +155,47 @@ app.get('/api/alerts', async (req, res) => {
   }
 });
 
+// GET /api/alerts/status - Retrieve triggered alerts only
+app.get('/api/alerts/status', async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    
+    // Get only triggered alerts with their details
+    const [rows] = await connection.execute(`
+      SELECT 
+        a.id,
+        a.lat,
+        a.lon,
+        a.parameter,
+        a.operator,
+        a.threshold,
+        a.description,
+        a.created_at,
+        ast.is_triggered,
+        ast.checked_at
+      FROM alerts a
+      INNER JOIN alert_status ast ON a.id = ast.alert_id
+      WHERE ast.is_triggered = true
+      ORDER BY ast.checked_at DESC
+    `);
+    
+    connection.release();
+    
+    res.json({
+      count: rows.length,
+      triggered_alerts: rows,
+      message: rows.length === 0 ? 'No alerts are currently triggered' : `${rows.length} alert(s) are currently triggered`
+    });
+    
+  } catch (error) {
+    console.error('Error fetching triggered alerts:', error);
+    res.status(500).json({
+      error: 'Failed to fetch triggered alerts',
+      message: error.message
+    });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ 
