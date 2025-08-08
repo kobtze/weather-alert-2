@@ -1,5 +1,38 @@
 # 🌤️ Weather Alert System - MVP
 
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (version 16 or higher)
+- npm or yarn
+
+### Installation & Setup
+```bash
+# Install dependencies
+npm install
+
+# Start the server
+npm start
+
+# Or for development
+npm run dev
+```
+
+### Available Endpoints
+- `GET /` - Hello World endpoint
+- `GET /health` - Health check endpoint
+
+### Testing the API
+```bash
+# Test Hello World endpoint
+curl http://localhost:3000
+
+# Test health check
+curl http://localhost:3000/health
+```
+
+---
+
 ## 🧠 High-Level Design (HLD)
 
 ### ⚙️ Architecture Overview
