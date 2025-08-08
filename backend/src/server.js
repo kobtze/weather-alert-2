@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 
 const { testConnection, initializeDatabase, getDatabaseStatus, pool } = require('./config/database');
@@ -6,6 +7,14 @@ const scheduler = require('./services/scheduler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// CORS configuration
+app.use(cors({
+  origin: ['http://localhost:3001', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware
 app.use(express.json());

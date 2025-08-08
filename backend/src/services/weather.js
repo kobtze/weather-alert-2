@@ -3,7 +3,7 @@ const axios = require('axios');
 class WeatherService {
   constructor() {
     this.apiKey = process.env.TOMORROW_API_KEY;
-    this.baseUrl = 'https://api.tomorrow.io/v4/weather';
+    this.baseUrl = process.env.TOMORROW_BASE_URL;
     
     if (!this.apiKey) {
       console.warn('⚠️  TOMORROW_API_KEY not set. Weather data will not be available.');
