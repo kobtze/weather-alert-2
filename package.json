@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node src/server.js"
+    "dev": "nodemon src/server.js"
   },
   "keywords": [
     "weather",
@@ -22,5 +22,8 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
