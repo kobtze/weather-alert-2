@@ -5,6 +5,7 @@ class Scheduler {
   constructor() {
     this.isRunning = false;
     this.cronJob = null;
+    this.cronExpression = process.env.CRON_EXPRESSION || '*/5 * * * *'; // every 5 minutes
   }
 
   /**
@@ -19,7 +20,7 @@ class Scheduler {
     console.log('⏰ Starting alert evaluation scheduler...');
 
     // Schedule alert evaluation every 5 minutes
-    this.cronJob = cron.schedule('*/5 * * * *', async () => { // TODO: move to .env
+    this.cronJob = cron.schedule(this.cronExpression, async () => {
       await this.runAlertEvaluation();
     }, {
       scheduled: false,
@@ -30,7 +31,7 @@ class Scheduler {
     this.cronJob.start();
     this.isRunning = true;
 
-    console.log('✅ Alert evaluation scheduler started (runs every 5 minutes)');
+    console.log(`✅ Alert evaluation scheduler started (runs every ${this.cronExpression})`);
     
     // Run initial evaluation after 10 seconds
     setTimeout(async () => {

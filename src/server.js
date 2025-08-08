@@ -424,8 +424,8 @@ app.listen(PORT, async () => {
     await initializeDatabase();
     
     // Start the alert evaluation scheduler
-    // console.log('⏰ Starting alert evaluation scheduler...');
-    // scheduler.startScheduler();
+    console.log('⏰ Starting alert evaluation scheduler...');
+    scheduler.startScheduler();
   } else {
     console.log('⚠️  Database connection failed. Some features may not work.');
   }
