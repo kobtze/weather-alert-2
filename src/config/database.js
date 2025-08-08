@@ -58,7 +58,9 @@ async function initializeDatabase() {
         alert_id INT NOT NULL,
         is_triggered BOOLEAN DEFAULT FALSE,
         checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_checked_at (checked_at),
         FOREIGN KEY (alert_id) REFERENCES alerts(id) ON DELETE CASCADE,
+        UNIQUE KEY unique_alert_status (alert_id),
         INDEX idx_alert_id (alert_id),
         INDEX idx_triggered (is_triggered)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4

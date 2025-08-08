@@ -26,7 +26,7 @@ npm install
 
 # Copy environment file and configure database
 cp env.example .env
-# Edit .env with your MySQL credentials
+# Edit .env with your MySQL credentials and Tomorrow.io API key
 
 # Create MySQL database
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS weather_alerts;"
@@ -41,8 +41,13 @@ npm run dev
 ### Available Endpoints
 - `GET /` - Hello World endpoint
 - `GET /health` - Health check endpoint (includes database status)
-- `POST /api/alerts` - Create new weather alert
+- `POST /api/alerts` - Create new weather alert (max 3 alerts)
 - `GET /api/alerts` - List all alerts with their current status
+- `DELETE /api/alerts/:id` - Delete an alert
+- `GET /api/alerts/status` - List only triggered alerts
+- `PUT /api/alerts/:id/status` - Update alert status
+- `POST /api/alerts/evaluate` - Manually trigger alert evaluation
+- `GET /api/weather` - Fetch weather data for a location
 
 ### Testing the API
 ```bash
@@ -52,7 +57,7 @@ curl http://localhost:3000
 # Test health check (includes database status)
 curl http://localhost:3000/health
 
-# Create a new weather alert
+# Create a new weather alert (max 3 alerts allowed)
 curl -X POST http://localhost:3000/api/alerts \
   -H "Content-Type: application/json" \
   -d '{
@@ -66,6 +71,18 @@ curl -X POST http://localhost:3000/api/alerts \
 
 # List all alerts
 curl http://localhost:3000/api/alerts
+
+# Delete an alert
+curl -X DELETE http://localhost:3000/api/alerts/1
+
+# List only triggered alerts
+curl http://localhost:3000/api/alerts/status
+
+# Manually trigger alert evaluation
+curl -X POST http://localhost:3000/api/alerts/evaluate
+
+# Fetch weather data for a location
+curl "http://localhost:3000/api/weather?lat=40.7128&lon=-74.0060"
 ```
 
 ---
