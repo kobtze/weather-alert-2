@@ -228,7 +228,7 @@ app.get('/api/alerts/status', async (req, res) => {
   try {
     const connection = await pool.getConnection();
     
-    // Get only triggered alerts with their details
+    // Get only triggered alerts with their latest status details
     const [rows] = await connection.execute(`
       SELECT 
         a.id,
@@ -240,10 +240,16 @@ app.get('/api/alerts/status', async (req, res) => {
         a.description,
         a.created_at,
         ast.is_triggered,
-        ast.checked_at
+        ast.checked_at,
+        ast.current_value
       FROM alerts a
       INNER JOIN alert_status ast ON a.id = ast.alert_id
       WHERE ast.is_triggered = true
+        AND ast.checked_at = (
+          SELECT MAX(ast2.checked_at)
+          FROM alert_status ast2
+          WHERE ast2.alert_id = a.id
+        )
       ORDER BY ast.checked_at DESC
     `);
     
