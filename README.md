@@ -41,6 +41,8 @@ npm run dev
 ### Available Endpoints
 - `GET /` - Hello World endpoint
 - `GET /health` - Health check endpoint (includes database status)
+- `POST /api/alerts` - Create new weather alert
+- `GET /api/alerts` - List all alerts with their current status
 
 ### Testing the API
 ```bash
@@ -49,6 +51,21 @@ curl http://localhost:3000
 
 # Test health check (includes database status)
 curl http://localhost:3000/health
+
+# Create a new weather alert
+curl -X POST http://localhost:3000/api/alerts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lat": 40.7128,
+    "lon": -74.0060,
+    "parameter": "temperature",
+    "operator": ">",
+    "threshold": 30,
+    "description": "High temperature alert for NYC"
+  }'
+
+# List all alerts
+curl http://localhost:3000/api/alerts
 ```
 
 ---
