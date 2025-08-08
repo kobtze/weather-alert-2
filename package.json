@@ -7,11 +7,18 @@
     "start": "node src/server.js",
     "dev": "node src/server.js"
   },
-  "keywords": ["weather", "alerts", "express", "nodejs"],
+  "keywords": [
+    "weather",
+    "alerts",
+    "express",
+    "nodejs"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "dotenv": "^17.2.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.14.3"
   },
   "engines": {
     "node": ">=16.0.0"

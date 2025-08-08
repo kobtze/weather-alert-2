@@ -1,4 +1,7 @@
 const express = require('express');
+require('dotenv').config();
+
+const { testConnection, initializeDatabase, getDatabaseStatus } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,13 +19,24 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
-  });
+// Health check endpoint (includes database status)
+app.get('/health', async (req, res) => {
+  try {
+    const dbStatus = await getDatabaseStatus();
+    res.json({ 
+      status: 'OK',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      database: dbStatus
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      error: error.message
+    });
+  }
 });
 
 // 404 handler
@@ -43,9 +57,20 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 Health check available at http://localhost:${PORT}/health`);
+  
+  // Initialize database connection and schema
+  console.log('🔌 Connecting to database...');
+  const dbConnected = await testConnection();
+  
+  if (dbConnected) {
+    console.log('📋 Initializing database schema...');
+    await initializeDatabase();
+  } else {
+    console.log('⚠️  Database connection failed. Some features may not work.');
+  }
 });
 
 module.exports = app;

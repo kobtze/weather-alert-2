@@ -5,11 +5,31 @@
 ### Prerequisites
 - Node.js (version 16 or higher)
 - npm or yarn
+- MySQL (version 8.0 or higher)
+
+#### Installing MySQL on macOS
+```bash
+# Install MySQL using Homebrew
+brew install mysql
+
+# Start MySQL service
+brew services start mysql
+
+# Verify MySQL is running
+brew services list | grep mysql
+```
 
 ### Installation & Setup
 ```bash
 # Install dependencies
 npm install
+
+# Copy environment file and configure database
+cp env.example .env
+# Edit .env with your MySQL credentials
+
+# Create MySQL database
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS weather_alerts;"
 
 # Start the server
 npm start
@@ -20,14 +40,14 @@ npm run dev
 
 ### Available Endpoints
 - `GET /` - Hello World endpoint
-- `GET /health` - Health check endpoint
+- `GET /health` - Health check endpoint (includes database status)
 
 ### Testing the API
 ```bash
 # Test Hello World endpoint
 curl http://localhost:3000
 
-# Test health check
+# Test health check (includes database status)
 curl http://localhost:3000/health
 ```
 
