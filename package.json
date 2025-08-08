@@ -1,0 +1,19 @@
+{
+  "name": "weather-alert-2",
+  "version": "1.0.0",
+  "description": "Weather Alert System - MVP",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "keywords": ["weather", "alerts", "express", "nodejs"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
