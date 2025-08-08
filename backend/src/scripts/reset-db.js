@@ -32,8 +32,8 @@ async function resetDatabase() {
     await connection.execute(`
       CREATE TABLE alerts (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        lat DECIMAL(10, 8) NOT NULL,
-        lon DECIMAL(11, 8) NOT NULL,
+        lat DECIMAL(10, 6) NOT NULL,
+        lon DECIMAL(11, 6) NOT NULL,
         parameter VARCHAR(50) NOT NULL,
         operator ENUM('>', '<', '>=', '<=', '=') NOT NULL,
         threshold DECIMAL(10, 2) NOT NULL,
@@ -52,9 +52,9 @@ async function resetDatabase() {
         alert_id INT NOT NULL,
         is_triggered BOOLEAN DEFAULT FALSE,
         checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        current_value DECIMAL(10, 2) NOT NULL,
         INDEX idx_checked_at (checked_at),
         FOREIGN KEY (alert_id) REFERENCES alerts(id) ON DELETE CASCADE,
-        UNIQUE KEY unique_alert_status (alert_id),
         INDEX idx_alert_id (alert_id),
         INDEX idx_triggered (is_triggered)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4

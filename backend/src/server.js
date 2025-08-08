@@ -105,13 +105,7 @@ app.post('/api/alerts', async (req, res) => {
       'INSERT INTO alerts (lat, lon, parameter, operator, threshold, description) VALUES (?, ?, ?, ?, ?, ?)',
       [lat, lon, parameter, operator, threshold, description || null]
     );
-    
-    // Create initial alert status entry
-    await connection.execute(
-      'INSERT INTO alert_status (alert_id, is_triggered) VALUES (?, ?)',
-      [result.insertId, false]
-    );
-    
+
     connection.release();
     
     // Return the created alert
@@ -157,6 +151,7 @@ app.get('/api/alerts', async (req, res) => {
         a.description,
         a.created_at,
         s.is_triggered,
+        s.current_value,
         s.checked_at
       FROM alerts a
       LEFT JOIN alert_status s
@@ -273,7 +268,7 @@ app.get('/api/alerts/status', async (req, res) => {
 app.put('/api/alerts/:id/status', async (req, res) => {
   try {
     const alertId = parseInt(req.params.id);
-    const { is_triggered, checked_at } = req.body;
+    const { is_triggered, checked_at, current_value } = req.body;
     
     // Validate alert ID
     if (isNaN(alertId) || alertId <= 0) {
@@ -283,6 +278,9 @@ app.put('/api/alerts/:id/status', async (req, res) => {
     // Validate required fields
     if (typeof is_triggered !== 'boolean') {
       return res.status(400).json({ error: 'is_triggered must be a boolean' });
+    }
+    if (typeof current_value !== 'number') {
+      return res.status(400).json({ error: 'current_value must be a number' });
     }
     
     const connection = await pool.getConnection();
@@ -301,18 +299,15 @@ app.put('/api/alerts/:id/status', async (req, res) => {
     // Update or insert alert status
     const checkedAt = checked_at || new Date();
     
-    // Convert to MySQL datetime format (YYYY-MM-DD HH:MM:SS)
+    // Convert to MySQL datetime format (YYYY-MM-DD HH:MM:SS) in local timezone
     const mysqlDateTime = checkedAt instanceof Date 
-      ? checkedAt.toISOString().slice(0, 19).replace('T', ' ')
-      : new Date(checkedAt).toISOString().slice(0, 19).replace('T', ' ');
+      ? new Date(checkedAt.getTime() - (checkedAt.getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace('T', ' ')
+      : new Date(new Date(checkedAt).getTime() - (new Date(checkedAt).getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace('T', ' ');
     
     await connection.execute(`
-      INSERT INTO alert_status (alert_id, is_triggered, checked_at) 
-      VALUES (?, ?, ?) 
-      ON DUPLICATE KEY UPDATE 
-        is_triggered = VALUES(is_triggered),
-        checked_at = VALUES(checked_at)
-    `, [alertId, is_triggered, mysqlDateTime]);
+      INSERT INTO alert_status (alert_id, is_triggered, checked_at, current_value) 
+      VALUES (?, ?, ?, ?)
+    `, [alertId, is_triggered, mysqlDateTime, current_value]);
     
     connection.release();
     

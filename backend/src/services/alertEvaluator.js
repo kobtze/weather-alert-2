@@ -130,7 +130,7 @@ class AlertEvaluator {
   async updateAlertStatuses(evaluationResults) {
     const updatePromises = evaluationResults
       .filter(result => result.success)
-      .map(result => this.updateAlertStatus(result.alertId, result.isTriggered));
+      .map(result => this.updateAlertStatus(result.alertId, result.isTriggered, result.currentValue));
 
     try {
       await Promise.all(updatePromises);
@@ -144,11 +144,12 @@ class AlertEvaluator {
   /**
    * Update a single alert status via API
    */
-  async updateAlertStatus(alertId, isTriggered) {
+  async updateAlertStatus(alertId, isTriggered, currentValue) {
     try {
       const response = await axios.put(`${this.baseUrl}/api/alerts/${alertId}/status`, {
         is_triggered: isTriggered,
-        checked_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        current_value: currentValue,
+        checked_at: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace('T', ' ')
       });
       
       return response.data;

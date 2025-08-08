@@ -104,6 +104,7 @@ const CurrentState = () => {
                   <h3>{alert.description}</h3>
                   <p><strong>Location:</strong> {alert.lat}, {alert.lon}</p>
                   <p><strong>Condition:</strong> {alert.parameter} {alert.operator} {alert.threshold}</p>
+                  <p><strong>Current Value:</strong> {alert.current_value}</p>
                   <p><strong>Status:</strong> <span className={getStatusClass(alert.is_triggered)}>{getStatusText(alert.is_triggered)}</span></p>
                   {alert.checked_at && (
                     <p><strong>Last Checked:</strong> {new Date(alert.checked_at).toLocaleString()}</p>
